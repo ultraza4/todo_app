@@ -1,19 +1,19 @@
-import { defineStore } from 'pinia'
-import type { Task, TasksStoreState } from '@/models/tasks'
+import { defineStore, type StoreDefinition } from 'pinia'
+import type { Task, TasksStoreState, TaskStoreActions } from '@/models/tasks'
 import axios from 'axios'
 import type { AxiosResponse } from 'axios';
 
-export const useTasksStore = defineStore('tasks', {
+export const useTasksStore: StoreDefinition<'tasks', TasksStoreState, {}, TaskStoreActions> = defineStore('tasks', {
   state(): TasksStoreState {
       return {
         tasks: []
       }
   },
-
   actions: {
     async getTasks() {
       try {
         const response: AxiosResponse<Task[]> = await axios.get(`http://localhost:3000/tasks`);
+        console.log(response.data)
         this.tasks = response.data;
       } catch (e) {
         console.log(e);
@@ -29,40 +29,45 @@ export const useTasksStore = defineStore('tasks', {
       }
     },
 
-    async getTaskById(id: number){
+    async getTaskById(id: string){
       try {
-        const response: AxiosResponse<Task[]> = await axios.get(`http://localhost:3000/tasks/${id}`);
-        this.tasks = response.data;
+        const response: AxiosResponse<Task> = await axios.get(`http://localhost:3000/tasks/${id}`);
+        return response.data;
+      } catch (e) {
+        console.log(e);
+        return null;
+      }
+    },
+
+    async createTask(task: Task) {
+      try {
+        const { id, ...taskWithoutId } = task;
+        await axios.post(`http://localhost:3000/tasks`, {...taskWithoutId});
       } catch (e) {
         console.log(e);
       }
     },
 
-    async createTask(){
+    async updateTask(updatedTask: Task){
       try {
-        const response: AxiosResponse<Task[]> = await axios.post(`http://localhost:3000/tasks`);
-        this.tasks = response.data;
+        await axios.put(`http://localhost:3000/tasks/${updatedTask.id}`, {...updatedTask});
       } catch (e) {
         console.log(e);
       }
     },
 
-    async updateTask(id: number, updatedTask: Task){
+    async deleteTask(id: string){
       try {
-        const response: AxiosResponse<Task[]> = await axios.put(`http://localhost:3000/tasks/${id}`, {...updatedTask});
-        console.log(response.data);
+        await axios.delete(`http://localhost:3000/tasks/${id}`);
       } catch (e) {
         console.log(e);
       }
     },
 
-    async deleteTask(id: number){
-      try {
-        const response: AxiosResponse<Task[]> = await axios.delete(`http://localhost:3000/tasks/${id}`);
-        this.tasks = response.data;
-      } catch (e) {
-        console.log(e);
-      }
+    filterTasksById(id: string){
+      this.tasks = this.tasks.filter(task => {
+        return task.id !== id
+      })
     }
   }
 });
