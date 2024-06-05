@@ -2,17 +2,17 @@
   "tasks": [
     {
       "completed": false,
-      "description": "Description first tasksdfsf",
-      "dueDate": "2024-08-01",
+      "description": "Description first tasks",
+      "dueDate": "2024-06-01",
       "id": "1",
       "title": "First"
     },
     {
-      "id": "8645",
-      "title": "sadfsaf",
-      "dueDate": "",
-      "completed": false,
-      "description": "asdfsaf"
+      "id": "9650",
+      "title": "Second Task",
+      "dueDate": "2024-06-04",
+      "completed": true,
+      "description": "descr for second task"
     }
   ]
 }

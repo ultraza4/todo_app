@@ -1,8 +1,9 @@
 <script setup lang="ts">
 
-import { type PropType } from 'vue'
+import { computed, type PropType } from 'vue'
 import type { Task } from '@/models/tasks'
 import { useTasksStore } from '@/stores/tasks'
+import { getDate } from '@/utils/date'
 
 const props = defineProps({
   task: { type: Object as PropType<Task> },
@@ -13,6 +14,11 @@ const props = defineProps({
 });
 
 const tasksStore = useTasksStore();
+
+//проверка даты и завершенности задачи
+const isTaskExpired = computed(() =>{
+  return !props.task?.completed && props.task && props.task.dueDate < getDate()
+})
 
 const updateTask = async (event: Event) => {
   if(props.task){
@@ -31,15 +37,17 @@ const deleteTask = async () => {
     }
   }
 }
+
+
 </script>
 
 <template>
-  <div class="task__item">
+  <div class="task__item" :class="{'task__item_incomplete': isTaskExpired}">
     <div class="task__item_status">
-      <input type="checkbox" :value="task?.completed" @change="updateTask($event)">
+      <input type="checkbox" :checked="task?.completed" @change="updateTask($event)">
     </div>
     <div class="task__item_info">
-      <span class="task__item_info-name">{{task?.title}}</span>
+      <span class="task__item_info-name" :class="{'task_completed': task?.completed}">{{task?.title}}</span>
       <span class="task__item_info-date">{{task?.dueDate}}</span>
     </div>
     <div class="task__item_actions">
@@ -54,7 +62,7 @@ const deleteTask = async () => {
   display: flex
   align-items: center
   gap: 10px
-  background-color: var(--todo-red)
+  background-color: var(--todo-gray)
   border-radius: 4px
   padding: 8px
   margin-bottom: 10px
@@ -66,8 +74,13 @@ const deleteTask = async () => {
     .task__item_info-name
       font-size: 20px
 
+    .task_completed
+      text-decoration: line-through
+
   .task__item_actions
     display: flex
     margin-left: auto
     gap: 10px
+.task__item_incomplete
+  background-color: var(--todo-red)
 </style>

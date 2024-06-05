@@ -5,27 +5,33 @@ import TaskItem from '@/components/TaskItem.vue'
 import BaseModal from '@/components/BaseModal.vue'
 import useShow from '@/composables/useShow'
 import type { Task } from '@/models/tasks'
+import { debounce } from '@/utils/helper'
 
 const tasksStore = useTasksStore();
+//создал специальный composable для более удобного использования в будущем
 const { isShow: isShowTaskModal, toggleShow: toggleTaskModal } = useShow();
 
 const selectedTask: Ref<Task> = ref({id: '', title: '', dueDate:'', completed: false, description: ''})
+const searchQuery: Ref<string> = ref('')
 
 onMounted(async ()=> {
   await tasksStore.getTasks();
 })
 
+//нужно выставить поля в локальной задаче в соответствий с выбранной задачой
 const setSelectedTask = (task: Task ) => {
   selectedTask.value = {...task}
   toggleTaskModal()
 }
 
+//при нажатий на добавление новой задачи нужно сбрасывать локальную задачу, если пользователь создает задачу после редактирования
 const addNewTask = () => {
   resetSelectedTask()
   toggleTaskModal()
 }
 
 const createOrUpdateTask = async () => {
+  //если есть id значит задачу нужно обновить, если она отсутсвтует то нужно создать задачу
   selectedTask.value.id  ?
     await tasksStore.updateTask(selectedTask.value) :
     await tasksStore.createTask(selectedTask.value)
@@ -43,12 +49,14 @@ const closeTaskModal = () => {
   toggleTaskModal()
 }
 
+//нужно отправлять запрос на поиск только после того как пользователь закончил печатать
+const getTasksWithDebounce = debounce(async () => await tasksStore.getTasksByName(searchQuery.value), 500);
 </script>
 
 <template>
   <div class="tasks">
     <div class="tasks__header">
-      <input type="text" class="tasks__header_search_input">
+      <input type="text" class="tasks__header_search_input" v-model="searchQuery" @input="getTasksWithDebounce">
       <button  class="tasks__header_add_btn todo__btn" @click="addNewTask">Добавить задачу</button>
     </div>
     <div class="tasks__list ">

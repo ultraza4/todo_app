@@ -22,7 +22,7 @@ export const useTasksStore: StoreDefinition<'tasks', TasksStoreState, {}, TaskSt
 
     async getTasksByName(taskName: string) {
       try {
-        const response: AxiosResponse<Task[]> = await axios.get(`http://localhost:3000/tasks?_title=${taskName}`);
+        const response: AxiosResponse<Task[]> = await axios.get(`http://localhost:3000/tasks?title=${taskName}`);
         this.tasks = response.data;
       } catch (e) {
         console.log(e);
@@ -50,7 +50,11 @@ export const useTasksStore: StoreDefinition<'tasks', TasksStoreState, {}, TaskSt
 
     async updateTask(updatedTask: Task){
       try {
-        await axios.put(`http://localhost:3000/tasks/${updatedTask.id}`, {...updatedTask});
+        const indexToUpdate = this.tasks.findIndex(task => task.id === updatedTask.id);
+        const response: AxiosResponse<Task> = await axios.put(`http://localhost:3000/tasks/${updatedTask.id}`, {...updatedTask});
+        if (indexToUpdate !== -1) {
+          this.tasks.splice(indexToUpdate, 1, response.data);
+        }
       } catch (e) {
         console.log(e);
       }
