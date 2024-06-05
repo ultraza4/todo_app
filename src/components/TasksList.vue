@@ -56,7 +56,7 @@ const getTasksWithDebounce = debounce(async () => await tasksStore.getTasksByNam
 <template>
   <div class="tasks">
     <div class="tasks__header">
-      <input type="text" class="tasks__header_search_input" v-model="searchQuery" @input="getTasksWithDebounce">
+      <input type="text" class="tasks__header_search_input todo__input" v-model="searchQuery" @input="getTasksWithDebounce" placeholder="Поиск">
       <button  class="tasks__header_add_btn todo__btn" @click="addNewTask">Добавить задачу</button>
     </div>
     <div class="tasks__list ">
@@ -66,15 +66,15 @@ const getTasksWithDebounce = debounce(async () => await tasksStore.getTasksByNam
       <div class="task__modal_body">
         <div class="task__modal_body_item">
           <span class="body_item_title">Название</span>
-          <input class="body_item_input" type="text" v-model="selectedTask.title">
+          <input class="body_item_input todo__input" type="text" v-model="selectedTask.title">
         </div>
         <div class="task__modal_body_item">
           <span class="body_item_title">Описание</span>
-          <input class="body_item_input"  type="text" v-model="selectedTask.description">
+          <input class="body_item_input todo__input"  type="text" v-model="selectedTask.description">
         </div>
         <div class="task__modal_body_item">
           <span class="body_item_title">Срок выполнения</span>
-          <input class="body_item_input"  type="date" v-model="selectedTask.dueDate">
+          <input class="body_item_input todo__input"  type="date" v-model="selectedTask.dueDate">
         </div>
       </div>
       <template #footer>
@@ -122,9 +122,4 @@ const getTasksWithDebounce = debounce(async () => await tasksStore.getTasksByNam
     .body_item_input
       width: 100%
       height: 30px
-      font-size: 16px
-      line-height: 22px
-      font-weight: 500
-      border-radius: 4px
-      border: 1px solid rgba(155, 155, 155, 1)
 </style>

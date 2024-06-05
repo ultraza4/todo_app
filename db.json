@@ -6,13 +6,6 @@
       "dueDate": "2024-06-01",
       "id": "1",
       "title": "First"
-    },
-    {
-      "id": "9650",
-      "title": "Second Task",
-      "dueDate": "2024-06-04",
-      "completed": true,
-      "description": "descr for second task"
     }
   ]
 }
